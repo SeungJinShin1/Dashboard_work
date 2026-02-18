@@ -20,7 +20,7 @@ export function MemoPad() {
 
     useEffect(() => {
         // Fetch memos from backend
-        fetch('http://127.0.0.1:8000/memos/?uid=default_user')
+        fetch('/api/memos/?uid=default_user')
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -33,7 +33,7 @@ export function MemoPad() {
     const saveItems = (newItems: MemoItem[]) => {
         setItems(newItems);
         // Save to backend
-        fetch('http://127.0.0.1:8000/memos/?uid=default_user', {
+        fetch('/api/memos/?uid=default_user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ items: newItems })

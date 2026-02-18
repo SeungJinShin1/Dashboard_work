@@ -118,7 +118,7 @@ export default function SchedulePage() {
                 return;
             }
 
-            const res = await fetch(`http://127.0.0.1:8000/schedule/${eventId}`, {
+            const res = await fetch(`/api/schedule/${eventId}`, {
                 method: 'DELETE'
             });
 
