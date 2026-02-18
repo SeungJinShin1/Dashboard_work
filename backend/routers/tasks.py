@@ -45,8 +45,10 @@ async def analyze_task(input: TaskInput):
         data = json.loads(clean_text)
         return data
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"Failed to parse Gemini response: {response_text}")
-        raise HTTPException(status_code=500, detail="Failed to analyze task")
+        raise HTTPException(status_code=500, detail=f"Failed to analyze task: {e}. Raw: {response_text[:100]}")
 
 @router.post("/")
 async def create_task(task_data: dict):

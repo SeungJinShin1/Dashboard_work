@@ -33,30 +33,28 @@ async def debug_config():
         "cwd": os.getcwd()
     }
 
-@app.get("/debug/models")
-async def debug_models():
-    try:
-        import httpx
-        api_key = os.getenv("GEMINI_API_KEY")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(url)
-            data = resp.json()
-            models = [m['name'] for m in data.get('models', [])]
-            return {"models": models}
-    except Exception as e:
-        return {"error": str(e)}
+@app.get("/debug/env")
+async def debug_env():
+    import os
+    env_vars = {}
+    for k, v in os.environ.items():
+        if "KEY" in k or "SECRET" in k or "TOKEN" in k or "CREDENTIALS" in k or "PASSWORD" in k:
+            env_vars[k] = f"{v[:5]}...{v[-5:]}" if v and len(v) > 10 else "SET (Lenght: " + str(len(v)) + ")"
+        else:
+            env_vars[k] = v
+    return env_vars
 
 # Configure CORS
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://dashboard-work-seungjinshin1s-projects.vercel.app", # Example
     "*"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"], # Temporarily allow all for debugging
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
