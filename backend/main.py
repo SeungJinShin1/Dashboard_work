@@ -9,7 +9,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import tasks, briefing, schedule, memos
 
-app = FastAPI(title="Head Teacher Dashboard API")
+app = FastAPI(
+    title="Head Teacher Dashboard API",
+    root_path="/api",
+    docs_url="/docs",
+    openapi_url="/openapi.json"
+)
 
 @app.get("/debug/config")
 async def debug_config():
