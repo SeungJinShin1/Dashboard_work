@@ -10,9 +10,16 @@ class FirebaseService:
             # For local dev, we might assume serviceAccountKey.json is in root or use mock
             
             # Check for credential JSON content (for Vercel/Cloud env)
-            cred_json = os.getenv("FIREBASE_CREDENTIALS")
+            # Prioritize standard names, but also check what the user used
+            cred_json = os.getenv("FIREBASE_CREDENTIALS") or os.getenv("FIREBASE_CREDENTIALS_JSON")
             cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH")
             
+            # Smart Fallback: If path looks like JSON, treat it as JSON
+            if cred_path and cred_path.strip().startswith("{"):
+                print("DEBUG: FIREBASE_CREDENTIALS_PATH looks like JSON. Using it as content.")
+                cred_json = cred_path
+                cred_path = None
+
             if cred_json:
                 import json
                 try:
@@ -21,13 +28,13 @@ class FirebaseService:
                     firebase_admin.initialize_app(cred)
                     print("Firebase initialized with JSON credentials.")
                 except Exception as e:
-                    print(f"Failed to parse FIREBASE_CREDENTIALS: {e}")
+                    print(f"Failed to parse Firebase Credentials JSON: {e}")
             elif cred_path and os.path.exists(cred_path):
                 cred = credentials.Certificate(cred_path)
                 firebase_admin.initialize_app(cred)
                 print(f"Firebase initialized with credentials from {cred_path}")
             else:
-                print("Warning: FIREBASE_CREDENTIALS or PATH not set. Using default.")
+                print("Warning: No valid Firebase credentials found (checked checks: JSON content or valid PATH).")
                 try:
                     firebase_admin.initialize_app()
                 except Exception as e:

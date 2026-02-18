@@ -5,6 +5,8 @@ import json
 class GeminiService:
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
+        if self.api_key:
+            self.api_key = self.api_key.strip().strip("'").strip('"')
         # User explicitly requested 3.0 (preview)
         self.model_name = "gemini-3-flash-preview" 
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models"
