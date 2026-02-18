@@ -1,6 +1,7 @@
-import pandas as pd
-from fastapi import UploadFile
 import io
+import csv
+from openpyxl import load_workbook
+from fastapi import UploadFile
 from services.gemini import gemini_service
 import json
 
@@ -10,11 +11,19 @@ class ExcelProcessor:
             # 1. Read Excel file
             print("DEBUG: Reading Excel file...")
             contents = await file.read()
-            df = pd.read_excel(io.BytesIO(contents))
-            print(f"DEBUG: Excel read successfully. Shape: {df.shape}")
+            wb = load_workbook(filename=io.BytesIO(contents), data_only=True)
+            ws = wb.active
             
             # Convert to CSV string for token efficiency
-            csv_data = df.to_csv(index=False)
+            output = io.StringIO()
+            writer = csv.writer(output)
+            for row in ws.iter_rows(values_only=True):
+                # Filter out completely empty rows
+                if any(cell is not None for cell in row):
+                    writer.writerow(row)
+            
+            csv_data = output.getvalue()
+            # print(f"DEBUG: Excel read successfully. CSV length: {len(csv_data)}")
             
             # 2. Prompt Gemini
             print("DEBUG: Prompting Gemini...")

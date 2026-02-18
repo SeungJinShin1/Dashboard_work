@@ -2,7 +2,6 @@ fastapi
 uvicorn
 google-generativeai
 firebase-admin
-pandas
 python-multipart
 openpyxl
 python-dotenv
