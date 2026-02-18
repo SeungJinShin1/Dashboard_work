@@ -8,7 +8,7 @@ router = APIRouter(prefix="/memos", tags=["memos"])
 class MemoItem(BaseModel):
     id: str
     text: str
-    checked: boolean = False
+    checked: bool = False
 
 # Note: Pydantic v2 uses `bool` not `boolean`, need to be careful with types.
 # Actually `bool` is correct python type.
