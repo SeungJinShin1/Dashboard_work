@@ -2,7 +2,7 @@ import io
 import csv
 from openpyxl import load_workbook
 from fastapi import UploadFile
-from services.gemini import gemini_service
+from backend.services.gemini import gemini_service
 import json
 
 class ExcelProcessor:
