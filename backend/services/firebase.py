@@ -36,7 +36,8 @@ class FirebaseService:
             else:
                 print("Warning: No valid Firebase credentials found (checked checks: JSON content or valid PATH).")
                 try:
-                    firebase_admin.initialize_app()
+                    # firebase_admin.initialize_app() # This might fail if no default creds
+                    print("Skipping default firebase init to prevent crash.")
                 except Exception as e:
                      print(f"Failed to initialize Firebase Default: {e}")
 
