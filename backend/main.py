@@ -12,7 +12,6 @@ from backend.routers import tasks, briefing, schedule, memos
 
 app = FastAPI(
     title="Head Teacher Dashboard API",
-    root_path="/api",
     docs_url="/docs",
     openapi_url="/openapi.json"
 )
@@ -24,6 +23,7 @@ origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://dashboard-work-seungjinshin1s-projects.vercel.app",
+    "https://dashboard-work-liart.vercel.app",
 ]
 
 # Add Vercel env var if present
