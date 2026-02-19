@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from services.gemini import gemini_service
-from services.firebase import get_db
+from backend.services.gemini import gemini_service
+from backend.services.firebase import get_db
 from datetime import datetime
 import json
 import uuid
@@ -58,7 +58,7 @@ async def create_task(task_data: dict):
     db = get_db()
     if not db:
         # Demo mode: Save to in-memory store
-        from services.store import demo_tasks
+        from backend.services.store import demo_tasks
         
         uid = task_data.get("uid", "default_user")
         task_id = str(uuid.uuid4())
@@ -103,7 +103,7 @@ async def get_tasks(uid: str = "default_user"):
     db = get_db()
     if not db:
         # Demo mode: Return in-memory tasks
-        from services.store import demo_tasks
+        from backend.services.store import demo_tasks
         return demo_tasks
         
     try:

@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException
-from services.gemini import gemini_service
-from services.firebase import get_db
+from backend.services.gemini import gemini_service
+from backend.services.firebase import get_db
 from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/briefing", tags=["briefing"])
@@ -58,13 +57,13 @@ async def get_briefing(uid: str = "default_user", force_refresh: bool = False):
         except Exception as e:
             print(f"Error fetching data from DB: {e}")
             # Fallback to demo
-            from services.store import demo_tasks, demo_events, demo_memos
+            from backend.services.store import demo_tasks, demo_events, demo_memos
             tasks = demo_tasks
             all_events = demo_events
             memos = demo_memos
     else:
         # Demo Mode
-        from services.store import demo_tasks, demo_events, demo_memos
+        from backend.services.store import demo_tasks, demo_events, demo_memos
         tasks = demo_tasks
         all_events = demo_events
         memos = demo_memos

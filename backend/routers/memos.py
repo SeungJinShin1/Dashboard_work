@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from services.firebase import get_db
+from backend.services.firebase import get_db
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -32,7 +32,7 @@ async def get_memos(uid: str = "default_user"):
              return []
     else:
         # Demo Mode
-        from services.store import demo_memos
+        from backend.services.store import demo_memos
         return demo_memos
 
 @router.post("/")
@@ -47,7 +47,7 @@ async def save_memos(request: MemoRequest, uid: str = "default_user"):
             raise HTTPException(status_code=500, detail=str(e))
     else:
         # Demo Mode
-        from services.store import demo_memos
+        from backend.services.store import demo_memos
         demo_memos.clear()
         demo_memos.extend(request.items)
         return {"message": "Saved to Demo Store"}

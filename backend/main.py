@@ -7,7 +7,7 @@ print(f"DEBUG: Loading .env from {env_path}, Exists: {os.path.exists(env_path)}"
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import tasks, briefing, schedule, memos
+from backend.routers import tasks, briefing, schedule, memos
 
 app = FastAPI(
     title="Head Teacher Dashboard API",
@@ -76,7 +76,7 @@ async def read_root():
 @app.get("/health")
 async def health_check():
     import os
-    from services.firebase import get_db
+    from backend.services.firebase import get_db
 
     status = {
         "status": "ok",

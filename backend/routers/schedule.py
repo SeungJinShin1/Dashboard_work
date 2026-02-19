@@ -1,6 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from services.excel_processor import excel_processor
-from services.firebase import get_db
+from backend.services.excel_processor import excel_processor
+from backend.services.firebase import get_db
 
 router = APIRouter(prefix="/schedule", tags=["schedule"])
 
@@ -33,7 +32,7 @@ async def upload_schedule(file: UploadFile = File(...)):
         if not db:
             print("DEBUG: Firestore DB not initialized")
             # Demo Mode: Save to Memory
-            from services.store import demo_events
+            from backend.services.store import demo_events
             # Assign IDs to events for deletion
             import uuid
             for event in events:
@@ -63,7 +62,7 @@ async def upload_schedule(file: UploadFile = File(...)):
 async def get_events():
     db = get_db()
     if not db:
-         from services.store import demo_events
+         from backend.services.store import demo_events
          return demo_events
          
     try:
@@ -79,7 +78,7 @@ async def delete_event(event_id: str):
     db = get_db()
     if not db:
         # Demo Mode
-        from services.store import demo_events
+        from backend.services.store import demo_events
         initial_count = len(demo_events)
         # Filter out the event to delete
         # Note: demo_events is a list, so we need to mutate it or replace contents
