@@ -1,3 +1,4 @@
+from fastapi import APIRouter, HTTPException
 from backend.services.gemini import gemini_service
 from backend.services.firebase import get_db
 from datetime import datetime, timedelta
