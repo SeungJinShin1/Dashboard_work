@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
 
+# Load env vars safely
 env_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(env_path) # Load env vars before imports
-print(f"DEBUG: Loading .env from {env_path}, Exists: {os.path.exists(env_path)}")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,53 +17,26 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-@app.get("/debug/config")
-async def debug_config():
-    key = os.getenv("GEMINI_API_KEY")
-    has_key = key is not None and len(key) > 10
-    masked_key = f"{key[:5]}...{key[-5:]}" if has_key and key else "None"
-    
-    from services.gemini import gemini_service
-    gemini_status = "Configured" if gemini_service.api_key else "Not Configured"
-    
-    return {
-        "env_path_exists": os.path.exists(env_path) if 'env_path' in globals() else "Unknown",
-        "has_gemini_key": has_key,
-        "masked_key": masked_key,
-        "gemini_service_status": gemini_status,
-        "cwd": os.getcwd()
-    }
-
-@app.get("/debug/env")
-async def debug_env():
-    import os
-    env_vars = {}
-    for k, v in os.environ.items():
-        if "KEY" in k or "SECRET" in k or "TOKEN" in k or "CREDENTIALS" in k or "PASSWORD" in k:
-            env_vars[k] = f"{v[:5]}...{v[-5:]}" if v and len(v) > 10 else "SET (Lenght: " + str(len(v)) + ")"
-        else:
-            env_vars[k] = v
-    return env_vars
+# Debug endpoints removed for security
 
 # Configure CORS
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://dashboard-work-seungjinshin1s-projects.vercel.app", # Example
-    "*"
+    "https://dashboard-work-seungjinshin1s-projects.vercel.app",
 ]
+
+# Add Vercel env var if present
+if os.getenv("FRONTEND_URL"):
+    origins.append(os.getenv("FRONTEND_URL"))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Temporarily allow all for debugging
+    allow_origins=origins, 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-
-# ... (omitted)
 
 app.include_router(tasks.router)
 app.include_router(briefing.router)
@@ -90,9 +64,9 @@ async def health_check():
     if api_key:
         status["env_loaded"] = True
         # 2. Check Gemini Service
-        from services.gemini import gemini_service
+        from backend.services.gemini import gemini_service
         status["gemini"] = "configured" if gemini_service.api_key else "not_configured"
-        status["gemini_model"] = gemini_service.model_name
+        # status["gemini_model"] = gemini_service.model_name # Hide detail
     else:
         status["env_loaded"] = False
         status["gemini"] = "missing_api_key"
@@ -105,6 +79,6 @@ async def health_check():
         else:
             status["firebase"] = "not_initialized"
     except Exception as e:
-        status["firebase"] = f"error: {str(e)}"
+        status["firebase"] = "error" # Hide detail
 
     return status
